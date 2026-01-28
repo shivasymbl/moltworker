@@ -315,15 +315,25 @@ You can route Anthropic API requests through [Cloudflare AI Gateway](https://dev
 
 ### Setup
 
-1. Create an AI Gateway in the [Cloudflare Dashboard](https://dash.cloudflare.com/) under **AI** → **AI Gateway**
+1. Create an AI Gateway in the [AI Gateway section](https://dash.cloudflare.com/?to=/:account/ai/ai-gateway/create-gateway) of the Cloudflare Dashboard.
 2. Set the `ANTHROPIC_BASE_URL` secret to your gateway's Anthropic endpoint:
+
+You'll find the base URL on the Overview tab of your newly created gateway. At the bottom of the page, expand the **Native API/SDK Examples** section and select "Anthropic".
 
 ```bash
 npx wrangler secret put ANTHROPIC_BASE_URL
 # Enter: https://gateway.ai.cloudflare.com/v1/{account_id}/{gateway_id}/anthropic
 ```
 
-3. Redeploy:
+3. Set the `ANTHROPIC_API_KEY` secret to an AI Gateway authentication token.
+
+On the Overview tab of your gateway, click **Create a token**, give it a Token name and leave Permissions and Account Resources as their defaults. Click "Create API Token" and copy the token. Then run:
+
+```bash
+npx wrangler secret put ANTHROPIC_API_KEY
+```
+
+4. Redeploy:
 
 ```bash
 npm run deploy

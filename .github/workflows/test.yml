@@ -90,8 +90,7 @@ jobs:
           # Base config uses AI Gateway with BYOK/Unified Billing (no direct key)
           # anthropic-direct uses ANTHROPIC_API_KEY only (no gateway)
           # aig-authenticated uses both (authenticated gateway + direct key)
-          # aig-key-no-url uses AI_GATEWAY_API_KEY + ANTHROPIC_API_KEY but no base URL
-          AI_GATEWAY_API_KEY: ${{ (matrix.config.env.USE_ANTHROPIC_DIRECT != 'true' || matrix.config.env.USE_AI_GATEWAY == 'true' || matrix.config.env.USE_AI_GATEWAY_KEY_ONLY == 'true') && secrets.AI_GATEWAY_API_KEY || '' }}
+          AI_GATEWAY_API_KEY: ${{ (matrix.config.env.USE_ANTHROPIC_DIRECT != 'true' || matrix.config.env.USE_AI_GATEWAY == 'true') && secrets.AI_GATEWAY_API_KEY || '' }}
           AI_GATEWAY_BASE_URL: ${{ (matrix.config.env.USE_ANTHROPIC_DIRECT != 'true' || matrix.config.env.USE_AI_GATEWAY == 'true') && secrets.AI_GATEWAY_BASE_URL || '' }}
           ANTHROPIC_API_KEY: ${{ matrix.config.env.USE_ANTHROPIC_DIRECT == 'true' && secrets.ANTHROPIC_API_KEY || '' }}
           TELEGRAM_BOT_TOKEN: ${{ matrix.config.env.TELEGRAM_BOT_TOKEN }}

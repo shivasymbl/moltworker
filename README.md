@@ -451,6 +451,21 @@ OpenClaw in Cloudflare Sandbox uses multiple authentication layers:
 
 3. **Device Pairing** - Each device (browser, CLI, chat platform DM) must be explicitly approved via the admin UI before it can interact with the assistant. This is the default "pairing" DM policy.
 
+### Secrets Management with Doppler
+
+For production deployments, we recommend using [Doppler](https://doppler.com) for secrets management instead of hardcoding tokens in configuration files.
+
+**Key principles:**
+- Secrets live in Doppler, never in config files
+- Use `${VAR_NAME}` syntax in `openclaw.json`
+- Run gateway via `doppler run --` wrapper
+
+See **[docs/SECRETS-MANAGEMENT.md](./docs/SECRETS-MANAGEMENT.md)** for the complete guide including:
+- Setup instructions
+- Migration checklist
+- Audit commands
+- Troubleshooting
+
 ## Troubleshooting
 
 **`npm run dev` fails with an `Unauthorized` error:** You need to enable Cloudflare Containers in the [Containers dashboard](https://dash.cloudflare.com/?to=/:account/workers/containers)

@@ -466,6 +466,10 @@ See **[docs/SECRETS-MANAGEMENT.md](./docs/SECRETS-MANAGEMENT.md)** for the compl
 - Audit commands
 - Troubleshooting
 
+### Model Upgrades
+
+See **[docs/OPENCLAW-MODEL-UPGRADE.md](./docs/OPENCLAW-MODEL-UPGRADE.md)** for upgrading Claude models (e.g., Opus 4.5 → 4.6), including version requirements and fallback configuration.
+
 ## Troubleshooting
 
 **`npm run dev` fails with an `Unauthorized` error:** You need to enable Cloudflare Containers in the [Containers dashboard](https://dash.cloudflare.com/?to=/:account/workers/containers)

@@ -192,6 +192,85 @@ Expected output includes:
 
 ---
 
+## Automated Self-Testing Infrastructure
+
+### Problem
+
+Patches can silently break after Graphiti upgrades, API changes, or system updates. Manual discovery of broken pipelines wastes time and creates write-only graphs (data goes in but can't be retrieved).
+
+### Solution: Daily Self-Test Cron
+
+`self_test.py` runs 14 tests daily at 01:30 UTC:
+
+| # | Test | What It Catches |
+|---|------|-----------------|
+| 1 | Neo4j connection | Database connectivity issues |
+| 2 | Graphiti initialization | Client setup failures |
+| 3 | Search with temporal filters | Broken search pipeline |
+| 4 | Temporal fields present | Missing `valid_at` dates |
+| 5 | Timeline search works | Time-range query failures |
+| 6 | Entity types importable | Import/module issues |
+| 7 | Extraction config + group_id classifier | Ingestion config errors |
+| 8 | CLI `kg search-current` end-to-end | Full pipeline test |
+| 9 | Episode count sanity check | Data integrity |
+| 10 | All episodes have group_ids | Classification issues |
+| 11 | Pydantic None guard patch still applied | Patch regression |
+| 12 | API compatibility (no deprecated params) | API drift detection |
+| 13 | SearchResults iteration | `.edges`/`.nodes` access |
+| 14 | Write + read round-trip | End-to-end validation |
+
+### Cron Configuration
+
+```cron
+# Daily Graphiti health check - 01:30 UTC
+30 1 * * * /path/to/python /path/to/self_test.py >> /var/log/graphiti-selftest.log 2>&1
+```
+
+### Self-Healing Behavior
+
+When a test fails:
+1. Cron sub-agent attempts automated fix
+2. Fix attempt is logged with full context
+3. Alert sent with:
+   - What broke
+   - What fix was attempted
+   - Whether fix succeeded
+   - Manual intervention needed (if any)
+
+### Log Review
+
+Check logs regularly for patterns:
+
+```bash
+# Recent failures
+grep -E "(FAIL|ERROR)" /var/log/graphiti-selftest.log | tail -20
+
+# Automated fixes applied
+grep "FIX APPLIED" /var/log/graphiti-selftest.log
+
+# Full test history
+tail -100 /var/log/graphiti-selftest.log
+```
+
+### Adding New Tests
+
+When discovering a new issue:
+
+1. Add test case to `self_test.py`
+2. Document the patch in this file
+3. Add automated fix logic if possible
+4. Update the test count in cron comments
+
+### Key Principle
+
+**Don't wait for manual discovery.** Every known failure mode should have:
+- A test that catches it
+- A fix that attempts repair
+- A log that records what happened
+- An alert if human intervention needed
+
+---
+
 ## Maintainer Notes
 
 These patches address Graphiti's evolving API. As Graphiti stabilizes, some patches may become unnecessary. Always test after upgrades before assuming patches are still required.
